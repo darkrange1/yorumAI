@@ -448,6 +448,22 @@ sentiment/
 
 ---
 
+## 🗺️ Yol Haritası
+
+Planlanan geliştirmeler:
+
+- [ ] **Amazon.com.tr desteği** — üçüncü platform entegrasyonu
+- [ ] **Çoklu ürün karşılaştırma** — aynı anda birden fazla ürün analizi
+- [ ] **Geçmiş analizler** — daha önce analiz edilen ürünlere hızlı erişim
+- [ ] **Fiyat/yorum oranı skoru** — paranın karşılığı değerlendirmesi
+- [ ] **Kategori bazlı insight** — elektronik, tekstil gibi alanlara özel temalar
+- [ ] **Webhook desteği** — analiz tamamlanınca bildirim gönderme
+- [ ] **REST API token auth** — paylaşımlı kullanım için güvenli erişim
+
+Öneri ve katkı için [issue açabilirsiniz](https://github.com/darkrange1/yorumAI/issues).
+
+---
+
 ## 📄 Lisans
 
 MIT License
