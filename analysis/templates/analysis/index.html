@@ -1,0 +1,1555 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YorumAI - Urunu Satin Almadan Once Bil</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #697565;
+    --yellow: #8A7B65;
+    --pink: #9B7A65;
+    --teal: #7A9B78;
+    --dark: #1E201E;
+    --card: #2A2C27;
+    --card2: #3C3D37;
+    --text: #ECDFCC;
+    --muted: #A8A490;
+    --report-paper: #F0E8D8;
+    --report-paper-2: #E8DCC4;
+    --report-ink: #2C2820;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 55% 45% at 8% 0%, rgba(105,117,101,0.22) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 42% at 95% 10%, rgba(60,61,55,0.28) 0%, transparent 65%),
+      radial-gradient(ellipse 45% 36% at 55% 98%, rgba(30,32,30,0.38) 0%, transparent 68%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    z-index: 10;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+  }
+
+  .theme-toggle {
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: .68rem;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color .2s, color .2s, background .2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--orange);
+    color: #fff;
+  }
+
+  .theme-icon {
+    font-size: .95rem;
+    line-height: 1;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo svg,
+  .logo-img {
+    width: 56px;
+    height: 56px;
+    display: block;
+  }
+
+
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 5rem 1rem 2rem;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--teal);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    max-width: 800px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .hero h1 .hl-orange { color: var(--orange); }
+  .hero h1 .hl-pink { color: var(--pink); }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 620px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .blob-1 { width: 400px; height: 400px; background: var(--pink); top: -100px; left: -100px; }
+  .blob-2 { width: 350px; height: 350px; background: var(--teal); top: 50px; right: -80px; }
+  .blob-3 { width: 300px; height: 300px; background: var(--orange); bottom: -80px; left: 40%; }
+
+  .search-wrap {
+    position: relative;
+    z-index: 5;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: var(--card);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    box-shadow: 0 0 40px rgba(105,117,101,0.2);
+  }
+
+  .search-box:focus-within {
+    border-color: var(--orange);
+    box-shadow: 0 0 50px rgba(105,117,101,0.35);
+  }
+
+  .search-icon { padding: 0 1rem 0 1.2rem; font-size: 1.2rem; opacity: 0.5; }
+
+  .search-box input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    padding: 1.1rem 0;
+  }
+
+  .search-box input::placeholder { color: var(--muted); }
+
+  .search-btn {
+    background: linear-gradient(135deg, var(--orange), var(--pink));
+    border: none;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    padding: 1.1rem 1.8rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+
+  .search-btn:hover { opacity: 0.85; }
+  .search-btn:disabled { opacity: 0.55; cursor: wait; }
+
+  .supported {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .supported span {
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: rgba(255,255,255,0.05);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .status {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    min-height: 1.2rem;
+  }
+
+  .status.error { color: #9fb7b9; }
+  .status.ok { color: var(--teal); }
+
+  .meta {
+    margin-top: .4rem;
+    text-align: center;
+    font-size: .72rem;
+    color: var(--muted);
+    word-break: break-all;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    display: none;
+    position: relative;
+    z-index: 2;
+  }
+
+  .loading.active { display: block; }
+
+  .spinner {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255,255,255,0.1);
+    border-top-color: var(--orange);
+    border-right-color: var(--pink);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading p { color: var(--muted); font-size: 0.9rem; }
+
+  .loading .typing {
+    display: inline-flex;
+    gap: 4px;
+    margin-top: 0.5rem;
+  }
+
+  .typing span {
+    width: 6px;
+    height: 6px;
+    background: var(--teal);
+    border-radius: 50%;
+    animation: bounce 1s infinite;
+  }
+
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%,60%,100% { transform: translateY(0); }
+    30% { transform: translateY(-8px); }
+  }
+
+  .result-area {
+    max-width: 900px;
+    margin: 1.5rem auto 2rem;
+    padding: 0 1rem;
+    display: none;
+    position: relative;
+    z-index: 2;
+  }
+
+  .result-area.active {
+    display: block;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .product-card {
+    background: var(--card);
+    border: 2.5px solid var(--report-ink);
+    border-radius: 24px;
+    padding: 1.2rem;
+    margin-bottom: 1.2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 5px 5px 0 var(--report-ink);
+    transition: transform .18s, box-shadow .18s;
+  }
+
+  .product-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--report-ink);
+  }
+
+  .product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--orange), var(--pink), var(--teal));
+  }
+
+  .product-info h2 {
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+    word-break: break-word;
+  }
+
+  .product-meta {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.6rem;
+  }
+
+  .meta-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .pill-green { background: rgba(157,184,187,0.18); color: var(--teal); }
+  .pill-orange { background: rgba(64,99,109,0.2); color: var(--orange); }
+  .pill-yellow { background: rgba(143,177,181,0.18); color: var(--yellow); }
+
+  .score-section {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    background: var(--card);
+    border: 2.5px solid var(--report-ink);
+    border-radius: 24px;
+    padding: 1.4rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 5px 5px 0 var(--report-ink);
+    transition: transform .18s, box-shadow .18s;
+  }
+
+  .score-section:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--report-ink);
+  }
+
+  .score-ring {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-ring svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg);
+  }
+
+  .score-ring .score-num {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--teal);
+    font-family: 'Space Mono', monospace;
+    position: relative;
+    z-index: 1;
+  }
+
+  .score-details h3 {
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 0.7rem;
+  }
+
+  .bar-item { margin-bottom: 0.55rem; }
+
+  .bar-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 3px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .bar-track {
+    height: 7px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    width: 0;
+    transition: width .5s ease;
+  }
+
+  .verdict {
+    background: linear-gradient(135deg, rgba(105,117,101,0.18), rgba(122,155,120,0.16));
+    border: 2.5px solid var(--report-ink);
+    border-radius: 24px;
+    padding: 1.4rem;
+    margin-bottom: 1.2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 5px 5px 0 var(--report-ink);
+    transition: transform .18s, box-shadow .18s;
+  }
+
+  .verdict:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--report-ink);
+  }
+
+  .verdict::after {
+    content: 'AI';
+    position: absolute;
+    right: 1.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.3rem;
+    opacity: 0.12;
+    font-weight: 900;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .verdict-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--orange);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .verdict h3 {
+    font-size: 1.2rem;
+    font-weight: 900;
+    margin-bottom: 0.6rem;
+  }
+
+  .verdict p {
+    color: #c7d4d2;
+    line-height: 1.7;
+    font-size: 0.9rem;
+    max-width: 680px;
+    white-space: pre-wrap;
+  }
+
+  .report-section {
+    margin-bottom: 1.2rem;
+  }
+
+  .report-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.9rem;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .report-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .layout-toggle {
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    cursor: pointer;
+    transition: border-color .2s, color .2s;
+  }
+
+  .layout-toggle:hover {
+    border-color: var(--orange);
+    color: #fff;
+  }
+
+  .report-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .report-grid.vertical {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── REPORT CARD ── */
+  .report-card {
+    border-radius: 26px;
+    border: 2.5px solid var(--report-ink);
+    box-shadow: 5px 5px 0 var(--report-ink);
+    overflow: hidden;
+    background: #F5F0E8;
+    display: flex;
+    flex-direction: column;
+    transition: transform .18s, box-shadow .18s;
+    cursor: default;
+    position: relative;
+  }
+
+  .report-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--report-ink);
+  }
+
+  .report-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.25;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+
+  .report-card[data-section="satisfaction"] { background: #E5F1EB; }
+  .report-card[data-section="complaints"]   { background: #FAE8EB; }
+  .report-card[data-section="bot"]          { background: #F5F0E0; }
+  .report-card[data-section="buy"]          { background: #E6EEF5; }
+  .report-card[data-section="summary"]      { background: #F0EBF5; }
+  .report-card[data-section="distribution"] { background: #F2EFE8; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.78rem 1rem;
+    border-bottom: 2px solid var(--report-ink);
+    position: relative;
+    z-index: 3;
+  }
+
+  .card-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.36rem;
+    font-size: 0.63rem;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 0.26rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.42);
+    border: 2px solid var(--report-ink);
+    color: #3A3228;
+  }
+
+  .card-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: #697565;
+    border: 1.5px solid var(--report-ink);
+  }
+
+  .report-card[data-section="satisfaction"] .card-dot { background: #3D8A56; }
+  .report-card[data-section="complaints"]   .card-dot { background: #B84050; }
+  .report-card[data-section="bot"]          .card-dot { background: #B08820; }
+  .report-card[data-section="buy"]          .card-dot { background: #4070B0; }
+  .report-card[data-section="summary"]      .card-dot { background: #7050A8; }
+
+  .card-count {
+    font-size: 0.63rem;
+    font-family: 'Space Mono', monospace;
+    color: rgba(44,40,32,0.4);
+  }
+
+  .card-body {
+    display: grid;
+    grid-template-columns: 1fr minmax(160px, 38%);
+    align-items: stretch;
+    flex: 1;
+    position: relative;
+    z-index: 3;
+  }
+
+  .card-body.no-img {
+    grid-template-columns: 1fr;
+  }
+
+  .report-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .report-points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.48rem;
+    flex: 1;
+  }
+
+  .report-points li {
+    font-size: 0.88rem;
+    color: #3A3026;
+    line-height: 1.4;
+    padding-left: 0.9rem;
+    position: relative;
+  }
+
+  .report-points li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #697565;
+    font-weight: 900;
+  }
+
+  .report-card[data-section="satisfaction"] .report-points li::before { color: #3D8A56; }
+  .report-card[data-section="complaints"]   .report-points li::before { color: #B84050; }
+
+  .report-foot {
+    margin-top: auto;
+    padding-top: 0.65rem;
+  }
+
+  .relevance {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.18rem 0.48rem;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.08);
+    font-size: 0.63rem;
+    font-family: 'Space Mono', monospace;
+    color: rgba(44,40,32,0.55);
+  }
+
+  .relevance b {
+    color: #2C2820;
+    font-weight: 800;
+  }
+
+  .report-visual {
+    overflow: hidden;
+    background: rgba(0,0,0,0.03);
+    align-self: stretch;
+    border-left: 2px solid var(--report-ink);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0.4rem 0.4rem 0;
+  }
+
+  .report-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+    display: block;
+  }
+
+  .report-fallback {
+    width: 100%;
+    height: 100%;
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(105,117,101,0.45);
+    text-align: center;
+    padding: 1rem;
+    line-height: 1.4;
+  }
+
+  .reviews-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+  }
+
+  .review-item {
+    background: var(--card2);
+    border-radius: 20px;
+    padding: 1rem;
+    margin-bottom: 0.7rem;
+    border: 2.5px solid var(--report-ink);
+    box-shadow: 5px 5px 0 var(--report-ink);
+    transition: transform .18s, box-shadow .18s;
+  }
+
+  .review-item:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--report-ink);
+  }
+
+  .review-item.pos { border-left-color: var(--teal); border-left-width: 4px; }
+  .review-item.neg { border-left-color: var(--pink); border-left-width: 4px; }
+  .review-item.neu { border-left-color: var(--yellow); border-left-width: 4px; }
+
+  .review-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.45rem;
+  }
+
+  .review-user { font-size: 0.78rem; font-weight: 800; }
+
+  .review-badge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .badge-pos { background: rgba(157,184,187,0.18); color: var(--teal); }
+  .badge-neg { background: rgba(199,212,210,0.2); color: var(--pink); }
+  .badge-neu { background: rgba(143,177,181,0.18); color: var(--yellow); }
+
+  .review-text { font-size: 0.85rem; color: #c7d4d2; line-height: 1.5; }
+
+  .empty {
+    color: var(--muted);
+    font-size: .85rem;
+    font-family: 'Space Mono', monospace;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-family: 'Space Mono', monospace;
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+  }
+
+  body[data-theme="light"] {
+    --dark: #F5F0E8;
+    --card: #FFFFFF;
+    --card2: #EDE8DC;
+    --text: #2C2820;
+    --muted: #697565;
+    --teal: #4A7A48;
+    --yellow: #7A6A4A;
+    background: #F5F0E8;
+    color: #2C2820;
+  }
+
+  body[data-theme="light"]::before {
+    background:
+      radial-gradient(ellipse 60% 50% at 10% 5%, rgba(105,117,101,.15) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 90% 10%, rgba(60,61,55,.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 95%, rgba(30,32,30,.08) 0%, transparent 60%);
+  }
+
+  body[data-theme="light"] nav {
+    border-bottom: 1px solid #D8D0C0;
+    background: rgba(245,240,232,.88);
+    backdrop-filter: blur(16px);
+  }
+
+  body[data-theme="light"] .theme-toggle {
+    border-color: #D8D0C0;
+    background: #FFFFFF;
+    color: #697565;
+  }
+
+  body[data-theme="light"] .theme-toggle:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  body[data-theme="light"] .hero p,
+  body[data-theme="light"] .status,
+  body[data-theme="light"] .meta,
+  body[data-theme="light"] .loading p,
+  body[data-theme="light"] .bar-label,
+  body[data-theme="light"] .review-text,
+  body[data-theme="light"] .empty,
+  body[data-theme="light"] footer,
+  body[data-theme="light"] .verdict p,
+  body[data-theme="light"] .reviews-title,
+  body[data-theme="light"] .supported span {
+    color: #697565;
+  }
+
+  body[data-theme="light"] .search-box {
+    border-color: #D8D0C0;
+    box-shadow: 0 6px 30px rgba(105,117,101,.1);
+  }
+
+  body[data-theme="light"] .search-box input,
+  body[data-theme="light"] .product-info h2,
+  body[data-theme="light"] .score-details h3,
+  body[data-theme="light"] .review-user,
+  body[data-theme="light"] .verdict h3,
+  body[data-theme="light"] .report-content h4 {
+    color: #2C2820;
+  }
+
+  body[data-theme="light"] .search-box input::placeholder {
+    color: #697565;
+  }
+
+  body[data-theme="light"] .supported span {
+    background: rgba(105,117,101,.15);
+    border: 1px solid #D8D0C0;
+  }
+
+  body[data-theme="light"] .status.error { color: #7A3A2A; }
+  body[data-theme="light"] .status.ok { color: #4A7A48; }
+
+  body[data-theme="light"] .spinner {
+    border-color: #D8D0C0;
+    border-top-color: var(--orange);
+    border-right-color: var(--pink);
+  }
+
+  body[data-theme="light"] .product-card,
+  body[data-theme="light"] .score-section,
+  body[data-theme="light"] .review-item {
+    border-color: var(--report-ink);
+    box-shadow: 5px 5px 0 var(--report-ink);
+  }
+
+  body[data-theme="light"] .report-card {
+    box-shadow: 5px 5px 0 var(--report-ink);
+  }
+
+  body[data-theme="light"] .card-header {
+    border-bottom-color: var(--report-ink);
+  }
+
+  body[data-theme="light"] .layout-toggle {
+    border-color: #D8D0C0;
+    background: #FFFFFF;
+    color: #697565;
+  }
+
+  body[data-theme="light"] .layout-toggle:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  body[data-theme="light"] .report-points li {
+    color: #3C3020;
+  }
+
+  body[data-theme="light"] .relevance {
+    background: rgba(0,0,0,0.09);
+    color: #4A4030;
+  }
+
+  body[data-theme="light"] .relevance b {
+    color: #1C1810;
+  }
+
+  body[data-theme="light"] .bar-track {
+    background: #DED8C8;
+  }
+
+  body[data-theme="light"] .score-ring > svg > circle:first-child {
+    stroke: #D8D0C0;
+  }
+
+  body[data-theme="light"] .verdict {
+    background: linear-gradient(135deg, rgba(105,117,101,.08), rgba(122,155,120,.09));
+    border-color: var(--report-ink);
+    box-shadow: 5px 5px 0 var(--report-ink);
+  }
+
+  body[data-theme="light"] footer {
+    border-top-color: #D8D0C0;
+  }
+
+  @media (max-width: 960px) {
+    .report-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 700px) {
+    .score-section { grid-template-columns: 1fr; }
+    .report-grid { grid-template-columns: 1fr; }
+    .report-card { grid-template-columns: 1fr; }
+    .report-visual {
+      min-height: 160px;
+      border-left: none;
+      border-top: 2px solid var(--report-ink);
+      padding-top: 0.55rem;
+    }
+    nav { padding: 1rem 1.2rem; }
+    .hero { padding-top: 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo" aria-label="YorumAI">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="YorumAI logo">
+      <defs>
+        <linearGradient id="navbg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#40636D"/>
+          <stop offset="100%" style="stop-color:#2F4950"/>
+        </linearGradient>
+        <linearGradient id="navsp" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#8FB1B5"/>
+          <stop offset="100%" style="stop-color:#C7D4D2"/>
+        </linearGradient>
+      </defs>
+      <rect width="100" height="100" rx="26" fill="url(#navbg)"/>
+      <ellipse cx="50" cy="18" rx="38" ry="14" fill="white" opacity="0.08"/>
+      <path d="M22 28 Q22 20 30 20 L70 20 Q78 20 78 28 L78 58 Q78 66 70 66 L54 66 L46 78 L42 66 L30 66 Q22 66 22 58 Z" fill="white" opacity="0.95"/>
+      <text x="50" y="47" font-family="'Arial Black',sans-serif" font-size="22" font-weight="900" text-anchor="middle" dominant-baseline="middle" fill="url(#navbg)">AI</text>
+      <circle cx="34" cy="36" r="2.5" fill="url(#navsp)" opacity="0.9"/>
+      <circle cx="66" cy="36" r="2.5" fill="url(#navsp)" opacity="0.9"/>
+      <circle cx="34" cy="52" r="2.5" fill="url(#navsp)" opacity="0.9"/>
+      <circle cx="66" cy="52" r="2.5" fill="url(#navsp)" opacity="0.9"/>
+      <g transform="translate(68,22)" fill="#8FB1B5" opacity="0.95"><polygon points="4,0 5,3 8,4 5,5 4,8 3,5 0,4 3,3"/></g>
+    </svg>
+  </div>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" type="button">
+      <span class="theme-icon" id="themeIcon">☀️</span>
+      <span id="themeLabel">Açık</span>
+    </button>
+  </div>
+</nav>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<section class="hero">
+  <div class="hero-eyebrow">Yapay Zeka Destekli Ürün Analizi</div>
+  <h1>Satın almadan önce<br><span class="hl-orange">gerçek yorumları</span><br><span class="hl-pink">öğren.</span></h1>
+  <p>Herhangi bir e-ticaret ürün linkini yapıştır, yapay zeka yorumları okuyup sana sade bir özet çıkarsın.</p>
+
+  <div class="search-wrap">
+    <form id="analysisForm" class="search-box">
+      <span class="search-icon">🔗</span>
+      <input type="url" id="urlInput" required placeholder="https://www.trendyol.com/urun/..." />
+      <button id="submitBtn" class="search-btn" type="submit">Analiz Et</button>
+    </form>
+    <div class="supported">
+      <span>Trendyol</span><span>Hepsiburada</span><span>AI Ozet</span><span>Sentiment</span>
+    </div>
+    <div class="status" id="statusBox"></div>
+    <div class="meta" id="metaBox"></div>
+  </div>
+</section>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <p>Yorumlar okunuyor ve analiz ediliyor...</p>
+  <div class="typing"><span></span><span></span><span></span></div>
+</div>
+
+<div class="result-area" id="resultArea">
+  <div class="product-card">
+    <div class="product-info">
+      <h2 id="productTitle">Urun Analizi</h2>
+      <p id="productMeta" style="color:var(--muted);font-size:0.83rem;margin-top:4px;">YorumAI</p>
+      <div class="product-meta">
+        <span class="meta-pill pill-green" id="pillPos">✓ 0 Olumlu</span>
+        <span class="meta-pill pill-yellow" id="pillNeu">~ 0 Notr</span>
+        <span class="meta-pill pill-orange" id="pillNeg">✗ 0 Olumsuz</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-section">
+    <div class="score-ring">
+      <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="10"/>
+        <circle id="scoreCircle" cx="60" cy="60" r="52" fill="none" stroke="url(#scoreGrad)" stroke-width="10"
+          stroke-dasharray="327" stroke-dashoffset="327" stroke-linecap="round"/>
+        <defs>
+          <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:var(--teal)"/>
+            <stop offset="100%" style="stop-color:var(--orange)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-num" id="scoreNum">0</div>
+    </div>
+    <div class="score-details">
+      <h3>Detayli Puanlama</h3>
+      <div class="bar-item">
+        <div class="bar-label"><span>Pozitif</span><span id="lblPos">0%</span></div>
+        <div class="bar-track"><div id="barPos" class="bar-fill" style="background:var(--teal)"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>Notr</span><span id="lblNeu">0%</span></div>
+        <div class="bar-track"><div id="barNeu" class="bar-fill" style="background:var(--yellow)"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>Negatif</span><span id="lblNeg">0%</span></div>
+        <div class="bar-track"><div id="barNeg" class="bar-fill" style="background:var(--pink)"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>Tekrar/Bot Riski</span><span id="lblDup">0%</span></div>
+        <div class="bar-track"><div id="barDup" class="bar-fill" style="background:var(--orange)"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <div class="verdict-label">YorumAI Karari</div>
+    <h3 id="verdictTitle">Analiz Sonucu</h3>
+    <p id="verdictText">Ozet burada gosterilecek.</p>
+  </div>
+
+  <section class="report-section">
+    <div class="report-head">
+      <div class="report-title">Rapor Kartlari</div>
+      <button id="layoutToggle" class="layout-toggle" type="button">Dikey Gorunum</button>
+    </div>
+    <div id="reportGrid" class="report-grid"></div>
+  </section>
+
+  <div class="reviews-title">One Cikan Yorumlar</div>
+  <div id="reviewList"></div>
+</div>
+
+<footer>
+  YorumAI | Satın almadan önce bilinçli ol | yapay zeka destekli ürün analizi
+</footer>
+
+<script>
+  const form = document.getElementById("analysisForm");
+  const urlInput = document.getElementById("urlInput");
+  const submitBtn = document.getElementById("submitBtn");
+  const themeToggle = document.getElementById("themeToggle");
+  const themeIcon = document.getElementById("themeIcon");
+  const themeLabel = document.getElementById("themeLabel");
+  const statusBox = document.getElementById("statusBox");
+  const metaBox = document.getElementById("metaBox");
+  const loading = document.getElementById("loading");
+  const resultArea = document.getElementById("resultArea");
+
+  const productTitle = document.getElementById("productTitle");
+  const productMeta = document.getElementById("productMeta");
+  const pillPos = document.getElementById("pillPos");
+  const pillNeu = document.getElementById("pillNeu");
+  const pillNeg = document.getElementById("pillNeg");
+
+  const scoreCircle = document.getElementById("scoreCircle");
+  const scoreNum = document.getElementById("scoreNum");
+  const barPos = document.getElementById("barPos");
+  const barNeu = document.getElementById("barNeu");
+  const barNeg = document.getElementById("barNeg");
+  const barDup = document.getElementById("barDup");
+  const lblPos = document.getElementById("lblPos");
+  const lblNeu = document.getElementById("lblNeu");
+  const lblNeg = document.getElementById("lblNeg");
+  const lblDup = document.getElementById("lblDup");
+
+  const verdictTitle = document.getElementById("verdictTitle");
+  const verdictText = document.getElementById("verdictText");
+  const layoutToggle = document.getElementById("layoutToggle");
+  const reportGrid = document.getElementById("reportGrid");
+  const reviewList = document.getElementById("reviewList");
+
+  let pollTimer = null;
+
+  function applyTheme(theme) {
+    document.body.setAttribute("data-theme", theme);
+    const isLight = theme === "light";
+    themeIcon.textContent = isLight ? "🌙" : "☀️";
+    themeLabel.textContent = isLight ? "Koyu" : "Açık";
+  }
+
+  function initTheme() {
+    const saved = localStorage.getItem("yorumai_theme");
+    const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+    const theme = saved || (prefersLight ? "light" : "dark");
+    applyTheme(theme);
+  }
+
+  function setStatus(text, type = "") {
+    statusBox.textContent = text || "";
+    statusBox.className = `status ${type}`.trim();
+  }
+
+  function stopPolling() {
+    if (pollTimer) {
+      clearInterval(pollTimer);
+      pollTimer = null;
+    }
+  }
+
+  function extractProductNameFromUrl(url) {
+    try {
+      const clean = url.split("?")[0];
+      const slug = clean.split("/").filter(Boolean).pop() || "urun";
+      return slug.replace(/-/g, " ").replace(/\bp\b\s*\d+$/i, "").trim() || "Urun";
+    } catch (_) {
+      return "Urun";
+    }
+  }
+
+  function pct(v, total) {
+    if (!total) return 0;
+    return Math.round((v / total) * 100);
+  }
+
+  function computeScore(pos, neu, neg, total, raw) {
+    if (!total) return 0;
+    const base = ((pos * 1.0) + (neu * 0.55) + (neg * 0.15)) / total * 100;
+    const dup = raw.duplicate_comment_insights || {};
+    const rep = Number(dup.repeated_comment_instances || 0);
+    const src = Number(raw.scraped_count || total);
+    const repeatRate = rep / Math.max(src, 1);
+    const penalty = repeatRate * 18;
+    return Math.max(0, Math.min(100, Math.round(base - penalty)));
+  }
+
+  function scoreTitle(score) {
+    if (score >= 75) return "Guclu Tavsiye";
+    if (score >= 55) return "Dengeli Secim";
+    if (score >= 35) return "Temkinli Yaklas";
+    return "Riskli Gorunuyor";
+  }
+
+  function sentimentBadge(sentiment) {
+    if (sentiment === "Pozitif") return { cls: "badge-pos", text: "Olumlu", row: "pos" };
+    if (sentiment === "Negatif") return { cls: "badge-neg", text: "Olumsuz", row: "neg" };
+    return { cls: "badge-neu", text: "Notr", row: "neu" };
+  }
+
+  function normalizeHeading(line) {
+    return (line || "")
+      .replace(/^\s*\d+\s*[\).:-]?\s*/, "")
+      .trim()
+      .toLowerCase()
+      .replace(/[’']/g, "")
+      .replace(/\s+/g, " ");
+  }
+
+  function headingKey(line) {
+    const value = normalizeHeading(line);
+    if (value.includes("şikayet nedenleri") || value.includes("sikayet nedenleri")) return "complaints";
+    if (value.includes("memnuniyet nedenleri")) return "satisfaction";
+    if (value.includes("tekrarlanan yorum") || value.includes("bot şüphesi") || value.includes("bot suphesi")) return "bot";
+    if (value.includes("satın alma önerisi") || value.includes("satin alma onerisi")) return "buy";
+    if (value.includes("kısa özet") || value.includes("kisa ozet")) return "summary";
+    if (value.includes("dağılım") || value.includes("dagilim")) return "distribution";
+    return "";
+  }
+
+  function parseSummarySections(summaryText) {
+    const lines = (summaryText || "").split("\n");
+    const sections = [];
+    let current = null;
+
+    lines.forEach((raw) => {
+      const line = raw.trim();
+      if (!line) return;
+      const key = headingKey(line);
+      if (key) {
+        current = { key, title: line, content: [] };
+        sections.push(current);
+      } else if (current) {
+        current.content.push(line);
+      }
+    });
+
+    return sections;
+  }
+
+  function sectionMeta(sectionKey) {
+    const map = {
+      complaints: {
+        icon: "Sikayet Gorseli",
+        label: "SIKAYET NEDENLERI",
+        base: 84,
+        tag: "Negatif Tema",
+        img: "/static/analysis/images/report/sikayet-kadin.png",
+        visualPos: "center",
+        objPos: "center bottom",
+      },
+      satisfaction: {
+        icon: "Memnuniyet Gorseli",
+        label: "MEMNUNIYET NEDENLERI",
+        base: 80,
+        tag: "Pozitif Tema",
+        img: "/static/analysis/images/report/memnuniyet-kadin.png",
+        visualPos: "center",
+        objPos: "center center",
+      },
+      bot: {
+        icon: "Tekrar Analizi",
+        label: "TEKRAR VE BOT SUPHESI",
+        base: 88,
+        tag: "Guvenilirlik",
+        img: "",
+        visualPos: "center",
+      },
+      buy: {
+        icon: "Satin Alma Onerisi",
+        label: "SATIN ALMA ONERISI",
+        base: 92,
+        tag: "Karar Destegi",
+        img: "",
+        visualPos: "center",
+      },
+      summary: {
+        icon: "Kisa Ozet",
+        label: "KISA OZET",
+        base: 72,
+        tag: "Genel Bakis",
+        img: "",
+        visualPos: "center",
+      },
+      distribution: {
+        icon: "Dagilim",
+        label: "DAGILIM",
+        base: 66,
+        tag: "Istatistik",
+        img: "",
+        visualPos: "center",
+      },
+    };
+    return map[sectionKey] || {
+      icon: "Rapor Gorseli",
+      label: "RAPOR BOLUMU",
+      base: 70,
+      tag: "Tema",
+      img: "",
+    };
+  }
+
+  function estimateRelevance(sectionKey, content) {
+    const text = (content || []).join(" ").toLowerCase();
+    const bullets = (content || []).filter((line) => line.startsWith("-")).length;
+    const words = text.split(/\s+/).filter(Boolean).length;
+    const meta = sectionMeta(sectionKey);
+    const intensity = Math.min(8, bullets * 2);
+    const detail = Math.min(10, Math.floor(words / 18));
+    const signal = /(cok|sik|belirgin|risk|oneri|uygun|uygunsuz|tekrar)/.test(text) ? 4 : 0;
+    return Math.max(45, Math.min(99, meta.base + intensity + detail + signal));
+  }
+
+  function setReportLayout(mode) {
+    const vertical = mode === "vertical";
+    reportGrid.classList.toggle("vertical", vertical);
+    layoutToggle.textContent = vertical ? "Yatay Gorunum" : "Dikey Gorunum";
+    localStorage.setItem("yorumai_report_layout", vertical ? "vertical" : "grid");
+  }
+
+  function escapeHtml(text) {
+    return String(text || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function sectionPoints(content) {
+    const raw = Array.isArray(content) ? content : [];
+    const bullets = raw
+      .filter((line) => line.startsWith("-"))
+      .map((line) => line.replace(/^\-\s*/, "").trim())
+      .filter(Boolean);
+    const fallback = raw
+      .filter((line) => !line.startsWith("-"))
+      .map((line) => line.trim())
+      .filter(Boolean);
+    const picked = (bullets.length ? bullets : fallback).slice(0, 3);
+    if (!picked.length) return ["Icerik bulunamadi."];
+    return picked;
+  }
+
+  function renderReportCards(summaryText) {
+    reportGrid.innerHTML = "";
+    const sections = parseSummarySections(summaryText);
+
+    if (!sections.length) {
+      reportGrid.innerHTML = '<div class="empty">Rapor karti olusturulamadi.</div>';
+      return { shortSummary: summaryText || "" };
+    }
+
+    sections.forEach((section) => {
+      const meta = sectionMeta(section.key);
+      const relevance = estimateRelevance(section.key, section.content);
+      const points = sectionPoints(section.content);
+      const pointMarkup = points.map((line) => `<li>${escapeHtml(line)}</li>`).join("");
+      const title = escapeHtml(meta.label || section.title || "Rapor Bolumu");
+      const visualLabel = escapeHtml(meta.icon || "Gorsel");
+      const imageSrc = escapeHtml(meta.img || "");
+      const card = document.createElement("article");
+      card.className = "report-card";
+      card.dataset.section = section.key;
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-pill"><span class="card-dot"></span>${title}</div>
+          <span class="card-count">${points.length} tema</span>
+        </div>
+        <div class="card-body no-img">
+          <div class="report-content">
+            <ul class="report-points">${pointMarkup}</ul>
+            <div class="report-foot">
+              <div class="relevance">Alaka <b>${relevance}%</b></div>
+            </div>
+          </div>
+        </div>
+      `;
+      reportGrid.appendChild(card);
+    });
+
+    const shortSummary = sections.find((s) => s.key === "summary");
+    return { shortSummary: shortSummary ? shortSummary.content.join(" ") : "" };
+  }
+
+  function renderReviews(comments) {
+    reviewList.innerHTML = "";
+    const picks = [];
+    const groups = {
+      Pozitif: comments.filter(c => c.sentiment === "Pozitif").slice(0, 2),
+      Negatif: comments.filter(c => c.sentiment === "Negatif").slice(0, 2),
+      "Nötr": comments.filter(c => c.sentiment === "Nötr").slice(0, 1)
+    };
+
+    picks.push(...groups.Pozitif, ...groups.Negatif, ...groups["Nötr"]);
+
+    if (!picks.length) {
+      reviewList.innerHTML = '<div class="empty">Ornek yorum bulunamadi.</div>';
+      return;
+    }
+
+    picks.slice(0, 5).forEach((c, i) => {
+      const badge = sentimentBadge(c.sentiment);
+      const item = document.createElement("div");
+      item.className = `review-item ${badge.row}`;
+      item.innerHTML = `
+        <div class="review-top">
+          <span class="review-user">Kullanici ${i + 1}</span>
+          <span class="review-badge ${badge.cls}">${badge.text}</span>
+        </div>
+        <div class="review-text">${(c.text || "").replace(/</g, "&lt;")}</div>
+      `;
+      reviewList.appendChild(item);
+    });
+  }
+
+  async function fetchAnalysis(analysisId) {
+    const res = await fetch(`/api/analyses/${analysisId}/`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Analiz bilgisi alinamadi.");
+    return data;
+  }
+
+  function applyResult(data, sourceUrl) {
+    const raw = data.raw_comments || {};
+    const comments = Array.isArray(raw.comments) ? raw.comments : [];
+    const total = comments.length;
+
+    let pos = 0;
+    let neu = 0;
+    let neg = 0;
+
+    comments.forEach((c) => {
+      if (c.sentiment === "Pozitif") pos += 1;
+      else if (c.sentiment === "Negatif") neg += 1;
+      else neu += 1;
+    });
+
+    const posPct = pct(pos, total);
+    const neuPct = pct(neu, total);
+    const negPct = pct(neg, total);
+
+    const dup = raw.duplicate_comment_insights || {};
+    const repeated = Number(dup.repeated_comment_instances || 0);
+    const scraped = Number(raw.scraped_count || total);
+    const dupPct = Math.max(0, Math.min(100, Math.round((repeated / Math.max(scraped, 1)) * 100)));
+
+    const score = computeScore(pos, neu, neg, total, raw);
+    const circumference = 327;
+    const offset = circumference - (circumference * score / 100);
+    scoreCircle.style.strokeDashoffset = String(offset);
+    scoreNum.textContent = String(score);
+
+    barPos.style.width = `${posPct}%`;
+    barNeu.style.width = `${neuPct}%`;
+    barNeg.style.width = `${negPct}%`;
+    barDup.style.width = `${dupPct}%`;
+
+    lblPos.textContent = `${posPct}%`;
+    lblNeu.textContent = `${neuPct}%`;
+    lblNeg.textContent = `${negPct}%`;
+    lblDup.textContent = `${dupPct}%`;
+
+    pillPos.textContent = `✓ ${pos} Olumlu`;
+    pillNeu.textContent = `~ ${neu} Notr`;
+    pillNeg.textContent = `✗ ${neg} Olumsuz`;
+
+    const name = extractProductNameFromUrl(sourceUrl);
+    productTitle.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+    productMeta.textContent = `${new URL(sourceUrl).hostname} · ${total} yorum secildi · skor ${score}/100`;
+
+    verdictTitle.textContent = scoreTitle(score);
+    const reportData = renderReportCards(data.summary_result || "");
+    verdictText.textContent = reportData.shortSummary || data.summary_result || "Ozet bulunamadi.";
+
+    renderReviews(comments);
+
+    loading.classList.remove("active");
+    resultArea.classList.add("active");
+    resultArea.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  async function startPolling(analysisId, sourceUrl) {
+    let ticks = 0;
+    stopPolling();
+
+    pollTimer = setInterval(async () => {
+      ticks += 1;
+      try {
+        const data = await fetchAnalysis(analysisId);
+        setStatus(`Durum: ${data.status} | Task: ${data.task_state || "N/A"}`);
+
+        if (data.status === "Completed") {
+          stopPolling();
+          submitBtn.disabled = false;
+          setStatus("Analiz tamamlandi.", "ok");
+          applyResult(data, sourceUrl);
+        } else if (data.status === "Failed") {
+          stopPolling();
+          submitBtn.disabled = false;
+          loading.classList.remove("active");
+          setStatus(`Analiz basarisiz: ${data.error || "Bilinmeyen hata"}`, "error");
+        } else if (ticks > 480) {
+          stopPolling();
+          submitBtn.disabled = false;
+          loading.classList.remove("active");
+          setStatus("Zaman asimi: islem beklenenden uzun surdu.", "error");
+        }
+      } catch (err) {
+        stopPolling();
+        submitBtn.disabled = false;
+        loading.classList.remove("active");
+        setStatus(err.message, "error");
+      }
+    }, 2500);
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const url = urlInput.value.trim();
+    if (!url) {
+      urlInput.focus();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    resultArea.classList.remove("active");
+    loading.classList.add("active");
+    setStatus("Analiz baslatiliyor...");
+    metaBox.textContent = "";
+
+    try {
+      const res = await fetch("/api/analyses/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Analiz baslatilamadi.");
+
+      metaBox.textContent = `analysis_id: ${data.analysis_id} | task_id: ${data.task_id}`;
+      setStatus("Analiz kuyruga alindi, sonuc bekleniyor...");
+      startPolling(data.analysis_id, url);
+    } catch (err) {
+      submitBtn.disabled = false;
+      loading.classList.remove("active");
+      setStatus(err.message, "error");
+    }
+  });
+
+  themeToggle.addEventListener("click", () => {
+    const current = document.body.getAttribute("data-theme") || "dark";
+    const next = current === "light" ? "dark" : "light";
+    localStorage.setItem("yorumai_theme", next);
+    applyTheme(next);
+  });
+
+  layoutToggle.addEventListener("click", () => {
+    const vertical = reportGrid.classList.contains("vertical");
+    setReportLayout(vertical ? "grid" : "vertical");
+  });
+
+  initTheme();
+  setReportLayout(localStorage.getItem("yorumai_report_layout") || "grid");
+</script>
+</body>
+</html>

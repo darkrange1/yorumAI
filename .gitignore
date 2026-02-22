@@ -1,0 +1,48 @@
+# Ortam değişkenleri — asla commit etme
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Docker volumes (yerel veri)
+postgres_data/
+postgres_data_v2/
+
+# IDE / editör
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Sentinel / model dosyaları (büyük)
+*.bin
+*.safetensors
+turkısh_sentiment_model/
